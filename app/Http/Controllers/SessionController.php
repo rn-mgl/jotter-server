@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -22,8 +23,6 @@ class SessionController extends Controller
             ]);
         }
 
-        $request->session()->regenerate();
-
         $user = Auth::user();
         $encryptedUser = Crypt::encryptString($user->id);
         $isVerified = $user->email_verified_at;
@@ -32,7 +31,18 @@ class SessionController extends Controller
             $request->user()->sendEmailVerificationNotification();
         }
 
+        $request->session()->regenerate();
+
         return response()->json(["success" => true, "user" => $encryptedUser, "isVerified" => $isVerified]);
 
+    }
+
+    public function getLoggedUser()
+    {
+        $user = auth()->user();
+        logger(`123123211`);
+        $encryptedUser = Crypt::encryptString($user->id);
+
+        return response()->json(["user" => $encryptedUser]);
     }
 }

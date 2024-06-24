@@ -32,16 +32,11 @@ Route::controller(SessionController::class)->group(function() {
 Route::get("get_user", function() {
     $user = request()->header("user");
     $decrypt = Crypt::decryptString($user);
-
     $user = User::find($decrypt);
-
     return response()->json(["valid" => $user ? true : false]);
 });
 
 Route::middleware(["auth"])->group(function() {
-
-
-
     Route::get('email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 

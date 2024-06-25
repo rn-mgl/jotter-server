@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use App\Models\User;
@@ -48,4 +49,9 @@ Route::middleware(["auth"])->group(function() {
 
         return response()->json(["success" => true]);
     })->middleware(['throttle:6,1'])->name('verification.send');
+
+    Route::controller(NoteController::class)->group(function() {
+        Route::post("note", "store");
+        Route::get("note", "index");
+    });
 });

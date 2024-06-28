@@ -32,4 +32,25 @@ class NoteController extends Controller
 
         return response()->json(["success" => true]);
     }
+
+    public function show(Note $note)
+    {
+        return response()->json($note);
+    }
+
+    public function patch(Note $note, Request $request)
+    {
+
+        $fileContent = null;
+
+        $attributes = [
+            "title" => $request["title"],
+            "content" => $request["content"],
+            "file_content" => $fileContent,
+        ];
+
+        $updated = $note->update($attributes);
+
+        return response()->json(["success" => $updated]);
+    }
 }

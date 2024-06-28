@@ -53,5 +53,7 @@ Route::middleware(["auth"])->group(function() {
     Route::controller(NoteController::class)->group(function() {
         Route::post("note", "store");
         Route::get("note", "index");
+        Route::get("note/{note}", "show")->can("edit", "note");
+        Route::patch("note/{note}", "patch")->can("edit", "note");
     });
 });

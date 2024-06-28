@@ -51,9 +51,9 @@ Route::middleware(["auth"])->group(function() {
     })->middleware(['throttle:6,1'])->name('verification.send');
 
     Route::controller(NoteController::class)->group(function() {
-        Route::post("note", "store");
         Route::get("note", "index");
         Route::get("note/{note}", "show")->can("edit", "note");
+        Route::post("note", "store");
         Route::patch("note/{note}", "patch")->can("edit", "note");
     });
 });

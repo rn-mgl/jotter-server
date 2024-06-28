@@ -5,13 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class NoteController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $notes = Note::with("user")->where("note_by", Auth::id())->latest()->get();
+        $valid_search_type = ["title", "content"];
+        $search_type = $request["search_type"];
+        $search_value = $request["search_value"];
+
+        if (!in_array($search_type, $valid_search_type)) {
+            throw ValidationException::withMessages([
+                "search_type" => "Invalid Search Type",
+            ]);
+        }
+
+        $notes = Note::with("user")->where("note_by", Auth::id())->where("$search_type", "like", "%$search_value%")->latest()->get();
 
         return response()->json(["notes" => $notes, "user" => Auth::id()]);
     }

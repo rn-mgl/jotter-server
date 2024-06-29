@@ -57,4 +57,8 @@ Route::middleware(["auth"])->group(function() {
         Route::patch("note/{note}", "patch")->can("edit", "note");
         Route::delete("note/{note}", "destroy")->can("edit", "note");
     });
+
+    Route::controller(SessionController::class)->group(function() {
+        Route::delete("logout", "destroy");
+    });
 });

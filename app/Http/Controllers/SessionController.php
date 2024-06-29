@@ -40,9 +40,19 @@ class SessionController extends Controller
     public function getLoggedUser()
     {
         $user = auth()->user();
-        logger(`123123211`);
         $encryptedUser = Crypt::encryptString($user->id);
 
         return response()->json(["user" => $encryptedUser]);
+    }
+
+    public function destroy(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json(["success" => true]);
     }
 }

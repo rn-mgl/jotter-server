@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -32,6 +33,10 @@ class NoteController extends Controller
 
         $fileContent = null;
 
+        if ($request->hasFile("file_content")) {
+            $fileContent = cloudinary()->upload($request->file("file_content")->getRealPath(), ["folder" => "jotter-uploads"])->getSecurePath();
+        }
+
         $attributes = [
             "title" => $request["title"],
             "content" => $request["content"],
@@ -53,6 +58,12 @@ class NoteController extends Controller
     {
 
         $fileContent = null;
+
+        if ($request->hasFile("file_content")) {
+            $fileContent = cloudinary()->upload($request->file("file_content")->getRealPath(), ["folder" => "jotter-uploads"])->getSecurePath();
+        } else if ($request["file_content"]) {
+            $fileContent = $request["file_content"];
+        }
 
         $attributes = [
             "title" => $request["title"],

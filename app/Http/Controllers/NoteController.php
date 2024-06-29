@@ -23,7 +23,7 @@ class NoteController extends Controller
             ]);
         }
 
-        $notes = Note::with("user")->where("note_by", Auth::id())->where("$search_type", "like", "%$search_value%")->latest()->get();
+        $notes = Note::with("user")->where("note_by", Auth::id())->where("$search_type", "like", "%$search_value%")->where("is_deleted", 0)->latest()->get();
 
         return response()->json(["notes" => $notes, "user" => Auth::id()]);
     }
@@ -74,5 +74,12 @@ class NoteController extends Controller
         $updated = $note->update($attributes);
 
         return response()->json(["success" => $updated]);
+    }
+
+    public function destroy(Note $note)
+    {
+        $deleted = $note->update(["is_deleted" => true]);
+
+        return response()->json(["success" => $deleted]);
     }
 }

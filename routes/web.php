@@ -55,5 +55,6 @@ Route::middleware(["auth"])->group(function() {
         Route::get("note/{note}", "show")->can("edit", "note");
         Route::post("note", "store");
         Route::patch("note/{note}", "patch")->can("edit", "note");
+        Route::delete("note/{note}", "destroy")->can("edit", "note");
     });
 });

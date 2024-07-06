@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
+use function PHPUnit\Framework\isEmpty;
+
 class NoteController extends Controller
 {
 
@@ -23,7 +25,13 @@ class NoteController extends Controller
             ]);
         }
 
-        $notes = Note::with("user")->where("note_by", Auth::id())->where("$search_type", "like", "%$search_value%")->where("is_deleted", 0)->latest()->get();
+        $query = Note::with("user")->where("note_by", Auth::id())->where("is_deleted", 0);
+
+        if (!empty($search_value)) {
+            $query->where("$search_type", "like", "%$search_value%");
+        }
+
+        $notes = $query->latest()->get();
 
         return response()->json(["notes" => $notes, "user" => Auth::id()]);
     }
@@ -37,8 +45,10 @@ class NoteController extends Controller
             $fileContent = cloudinary()->upload($request->file("file_content")->getRealPath(), ["folder" => "jotter-uploads"])->getSecurePath();
         }
 
+        $title = $request["title"] ?? "";
+
         $attributes = [
-            "title" => $request["title"],
+            "title" => $title,
             "content" => $request["content"],
             "file_content" => $fileContent,
             "note_by" => Auth::id()
@@ -65,10 +75,13 @@ class NoteController extends Controller
             $fileContent = $request["file_content"];
         }
 
+        $title = $request["title"] ?? "";
+
         $attributes = [
-            "title" => $request["title"],
+            "title" => $title,
             "content" => $request["content"],
             "file_content" => $fileContent,
+            "updated_at" => now()
         ];
 
         $updated = $note->update($attributes);

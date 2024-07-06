@@ -3,6 +3,7 @@
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -60,5 +61,9 @@ Route::middleware(["auth"])->group(function() {
 
     Route::controller(SessionController::class)->group(function() {
         Route::delete("logout", "destroy");
+    });
+
+    Route::controller(UserController::class)->group(function() {
+        Route::get("profile", "show");
     });
 });

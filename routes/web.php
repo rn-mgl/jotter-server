@@ -66,5 +66,6 @@ Route::middleware(["auth"])->group(function() {
     Route::controller(UserController::class)->group(function() {
         Route::get("profile", "show");
         Route::patch("profile", "patch");
+        Route::patch("change_password", "changePassword");
     });
 });

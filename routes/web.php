@@ -23,8 +23,14 @@ Route::get("csrf_token", function() {
     return response()->json(["csrf_token" => csrf_token()]);
 });
 
+Route::get("reset_password/{token}", function($token) {
+    return redirect("http://localhost:3000/reset/$token");
+})->name("password.reset");
+
 Route::controller(RegisterController::class)->group(function() {
-    Route::post("/register", "store");
+    Route::post("register", "store");
+    Route::post("forgot_password", "forgotPassword")->middleware("guest")->name("password.email");
+    Route::post("reset_password", "resetPassword")->name("password.update");
 });
 
 Route::controller(SessionController::class)->group(function() {

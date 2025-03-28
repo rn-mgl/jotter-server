@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(env("JOTTER_URL") . "/login");
 });
 
 Route::get("login", function() {
-    return redirect("http://localhost:3000/login");
+    return redirect(env("JOTTER_URL") . "/login");
 })->name("login");
 
 Route::get("csrf_token", function() {
@@ -24,7 +24,7 @@ Route::get("csrf_token", function() {
 });
 
 Route::get("reset_password/{token}", function($token) {
-    return redirect("http://localhost:3000/reset/$token");
+    return redirect(env("JOTTER_URL") . "/reset/$token");
 })->name("password.reset");
 
 Route::controller(RegisterController::class)->group(function() {
@@ -37,18 +37,11 @@ Route::controller(SessionController::class)->group(function() {
     Route::post("login", "store");
 });
 
-Route::get("get_user", function() {
-    $user = request()->header("user");
-    $decrypt = Crypt::decryptString($user);
-    $user = User::find($decrypt);
-    return response()->json(["valid" => $user ? true : false]);
-});
-
-Route::middleware(["auth"])->group(function() {
+Route::middleware(["auth", "valid_user"])->group(function() {
     Route::get('email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
-        return redirect("http://localhost:3000/login");
+        return redirect(env("JOTTER_URL") . "/login");
     })->middleware(['signed'])->name('verification.verify');
 
     Route::post('email/verification-notification', function (Request $request) {
